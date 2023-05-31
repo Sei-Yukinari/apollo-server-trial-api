@@ -3,7 +3,12 @@ export const user: QueryResolvers['user'] = async (
   parent,
   args,
   context
-): Promise<User> => ({
-  id: args.id,
-  name: 'bbbb',
-})
+): Promise<User> => {
+  console.log(context)
+  const result = {
+    id: args.id,
+    name: 'bbbb',
+  }
+
+  return result
+}
