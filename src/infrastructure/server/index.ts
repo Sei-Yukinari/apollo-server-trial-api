@@ -1,33 +1,40 @@
-import { ApolloServer } from 'apollo-server-express'
-import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core'
+import { ApolloServer } from '@apollo/server';
+import { expressMiddleware } from '@apollo/server/express4';
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import express from 'express'
-import http from 'http'
+import http, {Server} from 'http'
+import cors from 'cors';
+import { json } from 'body-parser';
 import { join } from 'path'
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
 import { loadSchemaSync } from '@graphql-tools/load'
 import { addResolversToSchema } from '@graphql-tools/schema'
 import { resolvers } from '@/controller/resolvers'
+import * as core from "express-serve-static-core";
 
-const schema = loadSchemaSync(join(__dirname, '../../../schema.graphql'), {
+const schema = loadSchemaSync(join(__dirname, '../../../schema/schema.graphql'), {
   loaders: [new GraphQLFileLoader()],
 })
 
-const schemaWithResolvers = addResolversToSchema({
-  schema,
-  resolvers,
-})
-const app = express()
-const httpServer = http.createServer(app)
-const server = new ApolloServer({
-  schema: schemaWithResolvers,
-  plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
-})
 
-export async function start(): Promise<http.Server> {
-  await server.start()
-  server.applyMiddleware({ app })
-
-  return app.listen({ port: 4000 }, () => {
-    console.log(`🚀 Server ready at http://localhost:4000${server.graphqlPath}`)
+export const setupServer = async (): Promise<Server> => {
+  const app = express()
+  const httpServer = http.createServer(app)
+  const server = new ApolloServer({
+    schema: addResolversToSchema({
+      schema,
+      resolvers,
+    }),
+    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
   })
+  await server.start()
+  app.use(
+      '/graphql',
+      cors<cors.CorsRequest>(),
+      json(),
+      expressMiddleware(server, {
+        context: async ({ req }) => ({ token: req.headers.token }),
+      }),
+  );
+  return httpServer
 }
