@@ -1,10 +1,20 @@
-type User {
-    id: ID!
-    name: String!
+schema {
+    query: Query
+    mutation: Mutation
 }
 
 type Query {
-    hello: String
-    user(id: String!): User
+    node(id: ID!): String!
 }
 
+type Mutation {
+    noop(input: NoopInput): NoopPayload
+}
+
+input NoopInput {
+    clientMutationId: String
+}
+
+type NoopPayload {
+    clientMutationId: String
+}

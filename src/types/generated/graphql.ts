@@ -17,21 +17,51 @@ export type Scalars = {
   Float: { input: number; output: number; }
 };
 
+export type Author = {
+  __typename?: 'Author';
+  name: Scalars['String']['output'];
+};
+
+export type Book = {
+  __typename?: 'Book';
+  author: Author;
+  title: Scalars['String']['output'];
+};
+
+export type Library = {
+  __typename?: 'Library';
+  books?: Maybe<Array<Book>>;
+  branch: Scalars['String']['output'];
+};
+
+export type Mutation = {
+  __typename?: 'Mutation';
+  noop?: Maybe<NoopPayload>;
+};
+
+
+export type MutationNoopArgs = {
+  input?: InputMaybe<NoopInput>;
+};
+
+export type NoopInput = {
+  clientMutationId?: InputMaybe<Scalars['String']['input']>;
+};
+
+export type NoopPayload = {
+  __typename?: 'NoopPayload';
+  clientMutationId?: Maybe<Scalars['String']['output']>;
+};
+
 export type Query = {
   __typename?: 'Query';
-  hello?: Maybe<Scalars['String']['output']>;
-  user?: Maybe<User>;
+  libraries?: Maybe<Array<Maybe<Library>>>;
+  node: Scalars['String']['output'];
 };
 
 
-export type QueryUserArgs = {
-  id: Scalars['String']['input'];
-};
-
-export type User = {
-  __typename?: 'User';
-  id: Scalars['ID']['output'];
-  name: Scalars['String']['output'];
+export type QueryNodeArgs = {
+  id: Scalars['ID']['input'];
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -106,35 +136,69 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
+  Author: ResolverTypeWrapper<Author>;
+  Book: ResolverTypeWrapper<Book>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']['output']>;
   ID: ResolverTypeWrapper<Scalars['ID']['output']>;
+  Library: ResolverTypeWrapper<Library>;
+  Mutation: ResolverTypeWrapper<{}>;
+  NoopInput: NoopInput;
+  NoopPayload: ResolverTypeWrapper<NoopPayload>;
   Query: ResolverTypeWrapper<{}>;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
-  User: ResolverTypeWrapper<User>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
+  Author: Author;
+  Book: Book;
   Boolean: Scalars['Boolean']['output'];
   ID: Scalars['ID']['output'];
+  Library: Library;
+  Mutation: {};
+  NoopInput: NoopInput;
+  NoopPayload: NoopPayload;
   Query: {};
   String: Scalars['String']['output'];
-  User: User;
 }>;
 
-export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
-  hello?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
-  user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<QueryUserArgs, 'id'>>;
-}>;
-
-export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
-  id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>;
+export type AuthorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Author'] = ResolversParentTypes['Author']> = ResolversObject<{
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type BookResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Book'] = ResolversParentTypes['Book']> = ResolversObject<{
+  author?: Resolver<ResolversTypes['Author'], ParentType, ContextType>;
+  title?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type LibraryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Library'] = ResolversParentTypes['Library']> = ResolversObject<{
+  books?: Resolver<Maybe<Array<ResolversTypes['Book']>>, ParentType, ContextType>;
+  branch?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
+  noop?: Resolver<Maybe<ResolversTypes['NoopPayload']>, ParentType, ContextType, Partial<MutationNoopArgs>>;
+}>;
+
+export type NoopPayloadResolvers<ContextType = Context, ParentType extends ResolversParentTypes['NoopPayload'] = ResolversParentTypes['NoopPayload']> = ResolversObject<{
+  clientMutationId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
+  libraries?: Resolver<Maybe<Array<Maybe<ResolversTypes['Library']>>>, ParentType, ContextType>;
+  node?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<QueryNodeArgs, 'id'>>;
+}>;
+
 export type Resolvers<ContextType = Context> = ResolversObject<{
+  Author?: AuthorResolvers<ContextType>;
+  Book?: BookResolvers<ContextType>;
+  Library?: LibraryResolvers<ContextType>;
+  Mutation?: MutationResolvers<ContextType>;
+  NoopPayload?: NoopPayloadResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
-  User?: UserResolvers<ContextType>;
 }>;
 
