@@ -16,6 +16,7 @@ import { Context } from '../../types/context'
 import config from 'config'
 import { repositoriesFactory } from '../../gateway'
 import { getErrorCode } from '../../erros'
+import { presentersFactory } from '../../inteface/presenter'
 
 const schema = loadSchemaSync(join(__dirname, '../../../schema/*.graphql'), {
   loaders: [new GraphQLFileLoader()],
@@ -71,9 +72,10 @@ export async function startServer() {
     cors<cors.CorsRequest>(),
     json(),
     expressMiddleware(server, {
-      context: async ({ req }) => ({
+      context: async ({ req }): Promise<Context> => ({
         token: 'aaaaaaa',
         repositories: repositoriesFactory,
+        presenters: presentersFactory,
       }),
     })
   )

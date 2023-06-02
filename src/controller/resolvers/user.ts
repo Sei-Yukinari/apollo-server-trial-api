@@ -13,11 +13,13 @@ import { errorName } from '../../erros'
 
 export const user: UserResolvers<User> = {
   Query: {
-    user: async (parent, args, ctx: Context) => {
+    user: async (parent, args, ctx: Context): Promise<User> => {
       const user = await ctx.repositories.user.find('a')
       if (!user) {
         throw new Error(errorName.USER_NOT_FOUND)
       }
+      console.log(1111111)
+      return ctx.presenters.user.user(user)
     },
   },
   Mutation: {
