@@ -1,0 +1,5 @@
+model User {
+  id      String  @id @unique
+  name    String  @db.VarChar(20)
+  todos Todo[]
+}

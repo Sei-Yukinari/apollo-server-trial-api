@@ -18,3 +18,5 @@ input NoopInput {
 type NoopPayload {
     clientMutationId: String
 }
+
+scalar Date

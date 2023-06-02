@@ -13,12 +13,15 @@ import { WebSocketServer } from 'ws'
 import { useServer } from 'graphql-ws/lib/use/ws'
 import { resolvers } from '@/controller/resolvers'
 import { Context } from '../../types/context'
+import config from 'config'
+import { repositoriesFactory } from '../../gateway'
+import { getErrorCode } from '../../erros'
 
 const schema = loadSchemaSync(join(__dirname, '../../../schema/*.graphql'), {
   loaders: [new GraphQLFileLoader()],
 })
 
-export async function start() {
+export async function startServer() {
   const app = express()
   const httpServer = http.createServer(app)
 
@@ -53,6 +56,14 @@ export async function start() {
         },
       },
     ],
+    formatError: err => {
+      const error = getErrorCode(err.message)
+      return {
+        message: error.message,
+        statusCode: error.statusCode,
+        path: err.path,
+      }
+    },
   })
   await server.start()
   app.use(
@@ -60,10 +71,15 @@ export async function start() {
     cors<cors.CorsRequest>(),
     json(),
     expressMiddleware(server, {
-      context: async ({ req }) => ({ token: 'aaaaaaa' }),
+      context: async ({ req }) => ({
+        token: 'aaaaaaa',
+        repositories: repositoriesFactory,
+      }),
     })
   )
-  httpServer.listen({ port: 4000 }, () => {
-    console.log(`🚀 Server ready at http://localhost:4000/graphql`)
+  httpServer.listen({ port: config.get('app.port') }, () => {
+    console.log(
+      `🚀 Server ready at http://localhost:${config.get('app.port')}/graphql`
+    )
   })
 }

@@ -1,0 +1,34 @@
+extend type Query {
+    todos: [Todo!]!
+    getTodoById(id: Int!): Todo
+}
+
+extend type Mutation {
+    addTodo(input: AddTodoInput!): Todo
+    updateTodo(id: Int!, input: UpdateTodoInput!): Todo
+    deleteTodo(id: Int!): Todo
+}
+
+input AddTodoInput {
+    title: String!
+}
+
+input UpdateTodoInput {
+    title: String!
+    status: TodoStatus!
+}
+
+enum TodoStatus {
+    done
+    pending
+}
+
+type Todo {
+    id: Int!
+    createdAt: Date
+    updatedAt: Date
+    title: String!
+    status: TodoStatus!
+#    user: User
+    userId: String!
+}
