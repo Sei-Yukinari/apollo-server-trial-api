@@ -1,5 +1,5 @@
-import { Repositories } from '../gateway'
-import { Presenters } from '../inteface/presenter'
+import { Repositories } from '@/interface/gateway'
+import { Presenters } from '@/interface/presenter'
 
 export interface Context {
   token?: string

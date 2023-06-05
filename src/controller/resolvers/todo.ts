@@ -1,4 +1,4 @@
-import { Todo, TodoResolvers, TodoStatus } from '../../types/generated/graphql'
+import { Todo, TodoResolvers, TodoStatus } from '@/types/generated/graphql'
 
 export const todo: TodoResolvers = {
   Query: {

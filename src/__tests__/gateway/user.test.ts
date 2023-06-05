@@ -1,11 +1,8 @@
-import { User } from '.prisma/client'
-import { UserRepository } from '../../gateway/user'
-import { UserModel } from '../../domain/model/user'
-import * as console from 'console'
+import { createUserRepository } from '@/interface/gateway/user'
 
 describe('prisma', () => {
   const prisma = jestPrisma.client
-  const repository = new UserRepository(prisma)
+  const repository = createUserRepository(prisma)
   const crateUser = {
     id: 'AAA',
     name: 'BBB',

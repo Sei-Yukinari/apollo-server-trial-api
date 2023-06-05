@@ -4,11 +4,11 @@ import {
   TodoStatus,
   User,
   UserResolvers,
-} from '../../types/generated/graphql'
+} from '@/types/generated/graphql'
 
-import { prisma } from '@/infrastructure/rdb/client'
+import { dbClient } from '@/infrastructure/rdb/client'
 import { GraphQLError } from 'graphql/error'
-import { Context } from '../../types/context'
+import { Context } from '@/types/context'
 import { errorName } from '../../erros'
 
 export const user: UserResolvers<User> = {
@@ -18,7 +18,6 @@ export const user: UserResolvers<User> = {
       if (!user) {
         throw new Error(errorName.USER_NOT_FOUND)
       }
-      console.log(1111111)
       return ctx.presenters.user.user(user)
     },
   },
@@ -44,7 +43,7 @@ export const user: UserResolvers<User> = {
 }
 
 async function getUser(): Promise<User> {
-  const u = await prisma.user.findUnique({
+  const u = await dbClient.user.findUnique({
     where: {
       id: '2',
     },

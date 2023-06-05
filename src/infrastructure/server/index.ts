@@ -12,11 +12,11 @@ import { addResolversToSchema } from '@graphql-tools/schema'
 import { WebSocketServer } from 'ws'
 import { useServer } from 'graphql-ws/lib/use/ws'
 import { resolvers } from '@/controller/resolvers'
-import { Context } from '../../types/context'
+import { Context } from '@/types/context'
 import config from 'config'
-import { repositoriesFactory } from '../../gateway'
+import { repositoriesFactory } from '@/interface/gateway'
 import { getErrorCode } from '../../erros'
-import { presentersFactory } from '../../inteface/presenter'
+import { presentersFactory } from '@/interface/presenter'
 
 const schema = loadSchemaSync(join(__dirname, '../../../schema/*.graphql'), {
   loaders: [new GraphQLFileLoader()],
