@@ -17,7 +17,7 @@ export class UserRepository implements IUserRepository {
   async find(id: string): Promise<UserModel | null> {
     const user = await this.rdb.user.findFirst({
       where: {
-        id: '1',
+        id: id,
       },
     })
     if (!user) {

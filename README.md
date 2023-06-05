@@ -1,13 +1,13 @@
 # apollo-server-trial-api
 ## prisma
 ```bash
-$ npx aaaprisma-import
+$ npx prisma-import
 ```
 
 ```bash
-$ npx aaaprisma migrate dev --name init
+$ npx prisma migrate dev --name init
 ```
 
 ```bash
-$ npx aaaprisma migrate deploy
+$ npx prisma migrate deploy
 ```
