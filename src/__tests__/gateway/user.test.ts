@@ -1,4 +1,4 @@
-import { createUserRepository } from '@/interface/gateway/user'
+import { createUserRepository } from '../../interface/gateway/user'
 
 describe('prisma', () => {
   const prisma = jestPrisma.client
