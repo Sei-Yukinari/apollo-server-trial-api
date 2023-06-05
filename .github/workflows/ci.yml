@@ -23,7 +23,8 @@ jobs:
         uses: actions/setup-node@v3
         with:
           node-version: 18
-          cache: npm
+          cache: yarn
+          cache-dependency-path: ./yarn.lock
       - name: yarn install, build, and test
         run: |
           yarn install --immutable --immutable-cache --check-cache
