@@ -24,7 +24,6 @@ jobs:
         with:
           node-version: 18
           cache: yarn
-          cache-dependency-path: ./apollo-server-trial-api/yarn.lock
       - name: yarn install, build, and test
         run: |
           yarn install --immutable --immutable-cache --check-cache
