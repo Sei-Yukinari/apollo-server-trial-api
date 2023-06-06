@@ -1,4 +1,5 @@
 import { createUserRepository } from '@/interface/gateway/user'
+import { Role } from '.prisma/client'
 
 describe('prisma', () => {
   const prisma = jestPrisma.client
@@ -6,6 +7,7 @@ describe('prisma', () => {
   const crateUser = {
     id: 'AAA',
     name: 'BBB',
+    role: Role.ADMIN,
   }
   beforeEach(async () => {
     await prisma.user.create({ data: crateUser })
