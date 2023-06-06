@@ -35,8 +35,6 @@ export async function startServer() {
     server: httpServer,
     path: '/graphql',
   })
-  // Save the returned server's info so we can shutdown this server later
-  const serverCleanup = useServer({ schema: loadSchema }, wsServer)
 
   const { authDirective } = authDirectiveTransformer('auth')
 
@@ -44,7 +42,10 @@ export async function startServer() {
     schema: loadSchema,
     resolvers,
   })
+
   const schema = authDirective(graphqlSchema)
+  // Save the returned server's info so we can shut down this server later
+  const serverCleanup = useServer({ schema: schema }, wsServer)
   const server = new ApolloServer<Context>({
     schema: schema,
     plugins: [
@@ -57,6 +58,7 @@ export async function startServer() {
       },
       {
         async serverWillStart() {
+          console.log('serverWillStart')
           return {
             async drainServer() {
               await serverCleanup.dispose()

@@ -1,0 +1,13 @@
+extend type Mutation {
+    createPost(author: String, comment: String): Post
+}
+
+extend type Subscription {
+    postCreated: Post
+    hello:String
+}
+
+type Post {
+    author: String
+    comment: String
+}

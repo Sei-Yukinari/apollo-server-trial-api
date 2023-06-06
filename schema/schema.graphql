@@ -11,6 +11,10 @@ type Mutation {
     noop(input: NoopInput): NoopPayload
 }
 
+type Subscription {
+    noop(input: NoopInput): NoopPayload
+}
+
 input NoopInput {
     clientMutationId: String
 }

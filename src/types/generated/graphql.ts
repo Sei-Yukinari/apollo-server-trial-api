@@ -42,6 +42,7 @@ export type Library = {
 export type Mutation = {
   __typename?: 'Mutation';
   addTodo?: Maybe<Todo>;
+  createPost?: Maybe<Post>;
   createUser?: Maybe<User>;
   deleteTodo?: Maybe<Todo>;
   noop?: Maybe<NoopPayload>;
@@ -52,6 +53,12 @@ export type Mutation = {
 
 export type MutationAddTodoArgs = {
   input: AddTodoInput;
+};
+
+
+export type MutationCreatePostArgs = {
+  author?: InputMaybe<Scalars['String']['input']>;
+  comment?: InputMaybe<Scalars['String']['input']>;
 };
 
 
@@ -91,6 +98,12 @@ export type NoopPayload = {
   clientMutationId?: Maybe<Scalars['String']['output']>;
 };
 
+export type Post = {
+  __typename?: 'Post';
+  author?: Maybe<Scalars['String']['output']>;
+  comment?: Maybe<Scalars['String']['output']>;
+};
+
 export type Query = {
   __typename?: 'Query';
   getTodoById?: Maybe<Todo>;
@@ -114,6 +127,18 @@ export enum Role {
   Admin = 'ADMIN',
   User = 'USER'
 }
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  hello?: Maybe<Scalars['String']['output']>;
+  noop?: Maybe<NoopPayload>;
+  postCreated?: Maybe<Post>;
+};
+
+
+export type SubscriptionNoopArgs = {
+  input?: InputMaybe<NoopInput>;
+};
 
 export type Todo = {
   __typename?: 'Todo';
@@ -229,9 +254,11 @@ export type ResolversTypes = ResolversObject<{
   Mutation: ResolverTypeWrapper<{}>;
   NoopInput: NoopInput;
   NoopPayload: ResolverTypeWrapper<NoopPayload>;
+  Post: ResolverTypeWrapper<Post>;
   Query: ResolverTypeWrapper<{}>;
   Role: Role;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
+  Subscription: ResolverTypeWrapper<{}>;
   Todo: ResolverTypeWrapper<Todo>;
   TodoStatus: TodoStatus;
   UpdateTodoInput: UpdateTodoInput;
@@ -252,8 +279,10 @@ export type ResolversParentTypes = ResolversObject<{
   Mutation: {};
   NoopInput: NoopInput;
   NoopPayload: NoopPayload;
+  Post: Post;
   Query: {};
   String: Scalars['String']['output'];
+  Subscription: {};
   Todo: Todo;
   UpdateTodoInput: UpdateTodoInput;
   User: User;
@@ -289,6 +318,7 @@ export type LibraryResolvers<ContextType = Context, ParentType extends Resolvers
 
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   addTodo?: Resolver<Maybe<ResolversTypes['Todo']>, ParentType, ContextType, RequireFields<MutationAddTodoArgs, 'input'>>;
+  createPost?: Resolver<Maybe<ResolversTypes['Post']>, ParentType, ContextType, Partial<MutationCreatePostArgs>>;
   createUser?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType, RequireFields<MutationCreateUserArgs, 'id' | 'input'>>;
   deleteTodo?: Resolver<Maybe<ResolversTypes['Todo']>, ParentType, ContextType, RequireFields<MutationDeleteTodoArgs, 'id'>>;
   noop?: Resolver<Maybe<ResolversTypes['NoopPayload']>, ParentType, ContextType, Partial<MutationNoopArgs>>;
@@ -301,12 +331,24 @@ export type NoopPayloadResolvers<ContextType = Context, ParentType extends Resol
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type PostResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Post'] = ResolversParentTypes['Post']> = ResolversObject<{
+  author?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  comment?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   getTodoById?: Resolver<Maybe<ResolversTypes['Todo']>, ParentType, ContextType, RequireFields<QueryGetTodoByIdArgs, 'id'>>;
   libraries?: Resolver<Maybe<Array<Maybe<ResolversTypes['Library']>>>, ParentType, ContextType>;
   node?: Resolver<ResolversTypes['String'], ParentType, ContextType, RequireFields<QueryNodeArgs, 'id'>>;
   todos?: Resolver<Array<ResolversTypes['Todo']>, ParentType, ContextType>;
   user?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
+}>;
+
+export type SubscriptionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = ResolversObject<{
+  hello?: SubscriptionResolver<Maybe<ResolversTypes['String']>, "hello", ParentType, ContextType>;
+  noop?: SubscriptionResolver<Maybe<ResolversTypes['NoopPayload']>, "noop", ParentType, ContextType, Partial<SubscriptionNoopArgs>>;
+  postCreated?: SubscriptionResolver<Maybe<ResolversTypes['Post']>, "postCreated", ParentType, ContextType>;
 }>;
 
 export type TodoResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Todo'] = ResolversParentTypes['Todo']> = ResolversObject<{
@@ -333,7 +375,9 @@ export type Resolvers<ContextType = Context> = ResolversObject<{
   Library?: LibraryResolvers<ContextType>;
   Mutation?: MutationResolvers<ContextType>;
   NoopPayload?: NoopPayloadResolvers<ContextType>;
+  Post?: PostResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  Subscription?: SubscriptionResolvers<ContextType>;
   Todo?: TodoResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 }>;
