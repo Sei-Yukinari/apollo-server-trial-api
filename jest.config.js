@@ -15,11 +15,7 @@ module.exports = {
   testEnvironmentOptions: {
     verboseQuery: true,
   },
-  moduleNameMapper: {
-    '^@interface/(.*)$': '<rootDir>/interface/$1',
-  },
-  modulePaths: [compilerOptions.baseUrl],
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
-    prefix: '<rootDir>/',
+    prefix: '<rootDir>/src',
   }),
 }
