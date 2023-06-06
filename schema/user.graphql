@@ -2,11 +2,10 @@ input UserInput {
     name: String!
 }
 
-directive @auth on OBJECT | FIELD_DEFINITION
+directive @auth(requires: Role = ADMIN) on OBJECT | FIELD_DEFINITION
 
 enum Role {
     ADMIN
-    REVIEWER
     USER
 }
 
@@ -17,7 +16,7 @@ type User {
 }
 
 extend type Query {
-    user: User @auth
+    user: User @auth(requires: ADMIN)
 }
 
 extend type Mutation {

@@ -13,7 +13,8 @@ jobs:
       postgres:
         image: postgres:15-alpine
         ports:
-          - 5432:5432
+          - 5433:5433
+        command: -p 5433
         env:
           POSTGRES_USER: test-user
           POSTGRES_PASSWORD: test-password
@@ -32,5 +33,5 @@ jobs:
           yarn migrate:test
           yarn test
         env:
-          DATABASE_URL: postgresql://test-user:test-password@localhost:5432/test
+          DATABASE_URL: postgresql://test-user:test-password@localhost:5433/test
           CI: true

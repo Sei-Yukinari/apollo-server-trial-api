@@ -1,14 +1,6 @@
 import { IUserRepository } from '@/domain/repository/user'
-import { UserModel } from '@/domain/model/user'
+import { createUser, UserModel } from '@/domain/model/user'
 import { PrismaClient, User } from '.prisma/client'
-
-function toModel(user: User): UserModel {
-  return {
-    id: user.id,
-    name: user.name,
-    role: user.role,
-  }
-}
 
 async function findUser(
   id: string,
@@ -22,7 +14,7 @@ async function findUser(
   if (!user) {
     return null
   }
-  return toModel(user)
+  return createUser(user.id, user.name, user.role)
 }
 
 export function createUserRepository(r: PrismaClient): IUserRepository {

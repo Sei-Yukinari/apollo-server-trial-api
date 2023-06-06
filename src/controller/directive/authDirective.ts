@@ -4,9 +4,17 @@ import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils'
 import { errorName } from '../../erros'
 
 export const authDirectiveTransformer = (directiveName: string) => {
+  const typeDirectiveArgumentMaps: Record<string, any> = {}
   return {
     authDirective: (schema: GraphQLSchema) =>
       mapSchema(schema, {
+        [MapperKind.TYPE]: type => {
+          const authDirective = getDirective(schema, type, directiveName)?.[0]
+          if (authDirective) {
+            typeDirectiveArgumentMaps[type.name] = authDirective
+          }
+          return undefined
+        },
         [MapperKind.OBJECT_FIELD]: fieldConfig => {
           const directive = getDirective(
             schema,
@@ -23,8 +31,8 @@ export const authDirectiveTransformer = (directiveName: string) => {
                 throw new Error(errorName.UNAUTHENTICATED)
               }
               const user = context.user
-
-              if (user.role != 'ADMIN') {
+              const { requires } = directive
+              if (user.role != requires) {
                 throw new Error(errorName.UNAUTHORIZED)
               }
 

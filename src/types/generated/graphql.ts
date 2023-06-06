@@ -112,7 +112,6 @@ export type QueryNodeArgs = {
 
 export enum Role {
   Admin = 'ADMIN',
-  Reviewer = 'REVIEWER',
   User = 'USER'
 }
 
@@ -261,7 +260,9 @@ export type ResolversParentTypes = ResolversObject<{
   UserInput: UserInput;
 }>;
 
-export type AuthDirectiveArgs = { };
+export type AuthDirectiveArgs = {
+  requires?: Maybe<Role>;
+};
 
 export type AuthDirectiveResolver<Result, Parent, ContextType = Context, Args = AuthDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 

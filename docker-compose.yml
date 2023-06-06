@@ -5,12 +5,13 @@ services:
     container_name: postgres
     image: postgres:15-alpine
     ports:
-      - "5432:5432"
+      - "5433:5433"
+    command: -p 5433
     volumes:
       - postgres-store:/var/lib/postgres/data
     environment:
       POSTGRES_USER: test-user
       POSTGRES_PASSWORD: test-password
-      POSTGRES_DB: dev
+      POSTGRES_DB: test
 volumes:
   postgres-store:
