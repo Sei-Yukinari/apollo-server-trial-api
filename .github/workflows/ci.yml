@@ -12,6 +12,7 @@ jobs:
     services:
       postgres:
         image: postgres:15-alpine
+        command: -p 5433
         ports:
           - 5433:5433
         env:
