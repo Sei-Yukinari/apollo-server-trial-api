@@ -14,7 +14,6 @@ jobs:
         image: postgres:15-alpine
         ports:
           - 5433:5433
-        command: -p 5433
         env:
           POSTGRES_USER: test-user
           POSTGRES_PASSWORD: test-password
