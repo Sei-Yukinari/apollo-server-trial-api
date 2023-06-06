@@ -25,7 +25,8 @@ export const post: PostResolvers = {
       },
     },
     postCreated: {
-      subscribe: () => {
+      subscribe: (_, __, ctx) => {
+        console.log('context', ctx)
         return pubsub.asyncIterator(['POST_CREATED'])
       },
     },

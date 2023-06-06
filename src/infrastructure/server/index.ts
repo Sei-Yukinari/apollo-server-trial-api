@@ -45,7 +45,26 @@ export async function startServer() {
 
   const schema = authDirective(graphqlSchema)
   // Save the returned server's info so we can shut down this server later
-  const serverCleanup = useServer({ schema: schema }, wsServer)
+  const webSocketServer = useServer(
+    {
+      schema: schema,
+      context: async (ctx): Promise<Context | null> => {
+        const token = ctx.connectionParams?.Authorization || ''
+        if (typeof token === 'string') {
+          return createWSContext(token)
+        }
+        return null
+      },
+      onConnect: ctx => {
+        console.log('onConnect', ctx.connectionParams)
+      },
+      onDisconnect(ctx, code, reason) {
+        console.log('Disconnected!')
+      },
+    },
+    wsServer
+  )
+  const serverCleanup = webSocketServer
   const server = new ApolloServer<Context>({
     schema: schema,
     plugins: [
@@ -100,6 +119,15 @@ async function createContext(req: Request): Promise<Context> {
   return {
     token: token,
     user: user,
+    repositories: repositoriesFactory,
+    presenters: presentersFactory,
+  }
+}
+
+async function createWSContext(token: string): Promise<Context | null> {
+  return {
+    token: token,
+    user: null,
     repositories: repositoriesFactory,
     presenters: presentersFactory,
   }
