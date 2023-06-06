@@ -110,6 +110,12 @@ export type QueryNodeArgs = {
   id: Scalars['ID']['input'];
 };
 
+export enum Role {
+  Admin = 'ADMIN',
+  Reviewer = 'REVIEWER',
+  User = 'USER'
+}
+
 export type Todo = {
   __typename?: 'Todo';
   createdAt?: Maybe<Scalars['Date']['output']>;
@@ -225,6 +231,7 @@ export type ResolversTypes = ResolversObject<{
   NoopInput: NoopInput;
   NoopPayload: ResolverTypeWrapper<NoopPayload>;
   Query: ResolverTypeWrapper<{}>;
+  Role: Role;
   String: ResolverTypeWrapper<Scalars['String']['output']>;
   Todo: ResolverTypeWrapper<Todo>;
   TodoStatus: TodoStatus;
@@ -253,6 +260,10 @@ export type ResolversParentTypes = ResolversObject<{
   User: User;
   UserInput: UserInput;
 }>;
+
+export type AuthDirectiveArgs = { };
+
+export type AuthDirectiveResolver<Result, Parent, ContextType = Context, Args = AuthDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
 
 export type AuthorResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Author'] = ResolversParentTypes['Author']> = ResolversObject<{
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
@@ -326,3 +337,6 @@ export type Resolvers<ContextType = Context> = ResolversObject<{
   User?: UserResolvers<ContextType>;
 }>;
 
+export type DirectiveResolvers<ContextType = Context> = ResolversObject<{
+  auth?: AuthDirectiveResolver<any, any, ContextType>;
+}>;

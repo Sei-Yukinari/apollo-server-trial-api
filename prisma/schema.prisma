@@ -46,5 +46,11 @@ model Todo {
 model User {
   id    String @id @unique
   name  String @db.VarChar(20)
+  role  Role   @default(USER)
   todos Todo[]
+}
+
+enum Role {
+  USER
+  ADMIN
 }

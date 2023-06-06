@@ -14,7 +14,7 @@ import { errorName } from '../../erros'
 export const user: UserResolvers<User> = {
   Query: {
     user: async (parent, args, ctx: Context): Promise<User> => {
-      const user = await ctx.repositories.user.find('a')
+      const user = await ctx.repositories.user.find('1')
       if (!user) {
         throw new Error(errorName.USER_NOT_FOUND)
       }
@@ -29,7 +29,6 @@ export const user: UserResolvers<User> = {
   },
   User: {
     todos(parent: User): Todo[] {
-      console.log(77777777, parent)
       return [
         {
           id: 1,

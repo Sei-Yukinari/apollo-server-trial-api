@@ -2,6 +2,14 @@ input UserInput {
     name: String!
 }
 
+directive @auth on OBJECT | FIELD_DEFINITION
+
+enum Role {
+    ADMIN
+    REVIEWER
+    USER
+}
+
 type User {
     id: String
     name: String
@@ -9,7 +17,7 @@ type User {
 }
 
 extend type Query {
-    user: User
+    user: User @auth
 }
 
 extend type Mutation {

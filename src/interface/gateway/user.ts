@@ -6,6 +6,7 @@ function toModel(user: User): UserModel {
   return {
     id: user.id,
     name: user.name,
+    role: user.role,
   }
 }
 

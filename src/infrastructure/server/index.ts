@@ -1,7 +1,7 @@
 import { ApolloServer } from '@apollo/server'
 import { expressMiddleware } from '@apollo/server/express4'
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer'
-import express from 'express'
+import express, { Request } from 'express'
 import http from 'http'
 import cors from 'cors'
 import { json } from 'body-parser'
@@ -17,10 +17,14 @@ import config from 'config'
 import { repositoriesFactory } from '@/interface/gateway'
 import { getErrorCode } from '../../erros'
 import { presentersFactory } from '@/interface/presenter'
+import { authDirectiveTransformer } from '@/controller/directive/authDirective'
 
-const schema = loadSchemaSync(join(__dirname, '../../../schema/*.graphql'), {
-  loaders: [new GraphQLFileLoader()],
-})
+const loadSchema = loadSchemaSync(
+  join(__dirname, '../../../schema/*.graphql'),
+  {
+    loaders: [new GraphQLFileLoader()],
+  }
+)
 
 export async function startServer() {
   const app = express()
@@ -32,13 +36,17 @@ export async function startServer() {
     path: '/graphql',
   })
   // Save the returned server's info so we can shutdown this server later
-  const serverCleanup = useServer({ schema }, wsServer)
+  const serverCleanup = useServer({ schema: loadSchema }, wsServer)
 
+  const { authDirective } = authDirectiveTransformer('auth')
+
+  const graphqlSchema = addResolversToSchema({
+    schema: loadSchema,
+    resolvers,
+  })
+  const schema = authDirective(graphqlSchema)
   const server = new ApolloServer<Context>({
-    schema: addResolversToSchema({
-      schema,
-      resolvers,
-    }),
+    schema: schema,
     plugins: [
       ApolloServerPluginDrainHttpServer({ httpServer }),
       {
@@ -72,11 +80,9 @@ export async function startServer() {
     cors<cors.CorsRequest>(),
     json(),
     expressMiddleware(server, {
-      context: async ({ req }): Promise<Context> => ({
-        token: 'aaaaaaa',
-        repositories: repositoriesFactory,
-        presenters: presentersFactory,
-      }),
+      context: async ({ req }): Promise<Context> => {
+        return createContext(req)
+      },
     })
   )
   httpServer.listen({ port: config.get('app.port') }, () => {
@@ -84,4 +90,15 @@ export async function startServer() {
       `🚀 Server ready at http://localhost:${config.get('app.port')}/graphql`
     )
   })
+}
+
+async function createContext(req: Request): Promise<Context> {
+  const token = req.headers.authorization || ''
+  const user = await repositoriesFactory.user.find('1')
+  return {
+    token: token,
+    user: user,
+    repositories: repositoriesFactory,
+    presenters: presentersFactory,
+  }
 }
