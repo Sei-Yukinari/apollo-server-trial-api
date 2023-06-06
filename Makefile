@@ -15,3 +15,6 @@ logs:
 	docker compose logs -f db
 exec:
 	docker compose exec db bash
+test:
+	yarn migrate:test \
+&&  yarn test
