@@ -1,7 +1,7 @@
 import { ApolloServer } from '@apollo/server'
 import { expressMiddleware } from '@apollo/server/express4'
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer'
-import express, { Request } from 'express'
+import express from 'express'
 import http from 'http'
 import cors from 'cors'
 import { json } from 'body-parser'
@@ -9,29 +9,15 @@ import { Context } from '@/types/context'
 import config from 'config'
 import { getErrorCode } from '../../erros'
 import { createWebSocketServer } from '@/infrastructure/server/webSocket'
-import { loadSchemaSync } from '@graphql-tools/load'
-import { join } from 'path'
-import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
-import { addResolversToSchema } from '@graphql-tools/schema'
-import { resolvers } from '@/controller/resolvers'
-import { mapDirective } from '@/infrastructure/server/schema'
-import { createHTTPContext } from '@/infrastructure/server/context'
 
-const loadSchema = loadSchemaSync(
-  join(__dirname, '../../../schema/*.graphql'),
-  {
-    loaders: [new GraphQLFileLoader()],
-  }
-)
+import { graphqlSchema } from '@/infrastructure/server/schema'
+import { createHTTPContext } from '@/infrastructure/server/context'
 
 export async function startServer() {
   const app = express()
   const httpServer = http.createServer(app)
-  const graphqlSchema = addResolversToSchema({
-    schema: loadSchema,
-    resolvers,
-  })
-  const schema = mapDirective(graphqlSchema)
+
+  const schema = graphqlSchema()
   const wsServer = createWebSocketServer(httpServer, schema)
   const server = new ApolloServer<Context>({
     schema: schema,
