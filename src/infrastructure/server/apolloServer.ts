@@ -1,6 +1,5 @@
 import { ApolloServer } from '@apollo/server'
-import { Context } from '@/types/context'
-import { ApolloServerPluginDrainHttpServer } from '@apollo/server/dist/esm/plugin/drainHttpServer'
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer'
 import { getErrorCode } from '../../erros'
 import { GraphQLSchema } from 'graphql/type'
 import { Disposable } from 'graphql-ws'
@@ -10,8 +9,8 @@ export const apolloServer = (
   schema: GraphQLSchema,
   httpServer: Server,
   wsServer: Disposable
-) => {
-  return new ApolloServer<Context>({
+): ApolloServer => {
+  return new ApolloServer({
     schema: schema,
     plugins: [
       ApolloServerPluginDrainHttpServer({ httpServer }),
