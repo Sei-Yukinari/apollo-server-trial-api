@@ -5,19 +5,17 @@ import express, { Request } from 'express'
 import http from 'http'
 import cors from 'cors'
 import { json } from 'body-parser'
-import { join } from 'path'
-import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
-import { loadSchemaSync } from '@graphql-tools/load'
-import { addResolversToSchema } from '@graphql-tools/schema'
-import { WebSocketServer } from 'ws'
-import { useServer } from 'graphql-ws/lib/use/ws'
-import { resolvers } from '@/controller/resolvers'
 import { Context } from '@/types/context'
 import config from 'config'
-import { repositoriesFactory } from '@/interface/gateway'
 import { getErrorCode } from '../../erros'
-import { presentersFactory } from '@/interface/presenter'
-import { authDirectiveTransformer } from '@/controller/directive/authDirective'
+import { createWebSocketServer } from '@/infrastructure/server/webSocket'
+import { loadSchemaSync } from '@graphql-tools/load'
+import { join } from 'path'
+import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
+import { addResolversToSchema } from '@graphql-tools/schema'
+import { resolvers } from '@/controller/resolvers'
+import { mapDirective } from '@/infrastructure/server/schema'
+import { createHTTPContext } from '@/infrastructure/server/context'
 
 const loadSchema = loadSchemaSync(
   join(__dirname, '../../../schema/*.graphql'),
@@ -29,42 +27,12 @@ const loadSchema = loadSchemaSync(
 export async function startServer() {
   const app = express()
   const httpServer = http.createServer(app)
-
-  // Create our WebSocket server using the HTTP server we just set up.
-  const wsServer = new WebSocketServer({
-    server: httpServer,
-    path: '/graphql',
-  })
-
-  const { authDirective } = authDirectiveTransformer('auth')
-
   const graphqlSchema = addResolversToSchema({
     schema: loadSchema,
     resolvers,
   })
-
-  const schema = authDirective(graphqlSchema)
-  // Save the returned server's info so we can shut down this server later
-  const webSocketServer = useServer(
-    {
-      schema: schema,
-      context: async (ctx): Promise<Context | null> => {
-        const token = ctx.connectionParams?.Authorization || ''
-        if (typeof token === 'string') {
-          return createWSContext(token)
-        }
-        return null
-      },
-      onConnect: ctx => {
-        console.log('onConnect', ctx.connectionParams)
-      },
-      onDisconnect(ctx, code, reason) {
-        console.log('Disconnected!')
-      },
-    },
-    wsServer
-  )
-  const serverCleanup = webSocketServer
+  const schema = mapDirective(graphqlSchema)
+  const wsServer = createWebSocketServer(httpServer, schema)
   const server = new ApolloServer<Context>({
     schema: schema,
     plugins: [
@@ -80,7 +48,7 @@ export async function startServer() {
           console.log('serverWillStart')
           return {
             async drainServer() {
-              await serverCleanup.dispose()
+              await wsServer.dispose()
             },
           }
         },
@@ -102,7 +70,7 @@ export async function startServer() {
     json(),
     expressMiddleware(server, {
       context: async ({ req }): Promise<Context> => {
-        return createContext(req)
+        return createHTTPContext(req)
       },
     })
   )
@@ -111,24 +79,4 @@ export async function startServer() {
       `🚀 Server ready at http://localhost:${config.get('app.port')}/graphql`
     )
   })
-}
-
-async function createContext(req: Request): Promise<Context> {
-  const token = req.headers.authorization || ''
-  const user = await repositoriesFactory.user.find('1')
-  return {
-    token: token,
-    user: user,
-    repositories: repositoriesFactory,
-    presenters: presentersFactory,
-  }
-}
-
-async function createWSContext(token: string): Promise<Context | null> {
-  return {
-    token: token,
-    user: null,
-    repositories: repositoriesFactory,
-    presenters: presentersFactory,
-  }
 }
