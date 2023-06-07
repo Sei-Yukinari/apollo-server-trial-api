@@ -1,31 +1,25 @@
-const myPlugin = {
-  async requestDidStart() {
-    return {
-      async parsingDidStart() {
-        return async err => {
-          if (err) {
-            console.error(err)
-          }
-        }
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer'
+import { Server } from 'http'
+import { Disposable } from 'graphql-ws'
+
+export const plugins = (httpServer: Server, wsServer: Disposable) => {
+  return [
+    ApolloServerPluginDrainHttpServer({ httpServer }),
+    {
+      async requestDidStart({ contextValue }) {
+        // token is properly inferred as a string
+        // console.log(contextValue.token)
       },
-      async validationDidStart() {
-        // This end hook is unique in that it can receive an array of errors,
-        // which will contain every validation error that occurred.
-        return async errs => {
-          if (errs) {
-            errs.forEach(err => console.error(err))
-          }
-        }
-      },
-      async executionDidStart() {
+    },
+    {
+      async serverWillStart() {
+        console.log('serverWillStart')
         return {
-          async executionDidEnd(err) {
-            if (err) {
-              console.error(err)
-            }
+          async drainServer() {
+            await wsServer.dispose()
           },
         }
       },
-    }
-  },
+    },
+  ]
 }

@@ -4,7 +4,7 @@ import { UserModel } from '@/domain/model/user'
 
 export interface Context {
   token?: string
-  user: UserModel | null
+  user?: UserModel | undefined
   repositories: Repositories
   presenters: Presenters
 }

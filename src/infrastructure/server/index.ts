@@ -13,12 +13,14 @@ import { apolloServer } from '@/infrastructure/server/apolloServer'
 
 export async function startServer() {
   const app = express()
-  const httpServer = http.createServer(app)
-
   const schema = graphqlSchema()
+
+  const httpServer = http.createServer(app)
   const wsServer = createWebSocketServer(httpServer, schema)
   const server = apolloServer(schema, httpServer, wsServer)
+
   await server.start()
+
   app.use(
     '/graphql',
     cors<cors.CorsRequest>(),
@@ -33,5 +35,8 @@ export async function startServer() {
     console.log(
       `🚀 Server ready at http://localhost:${config.get('app.port')}/graphql`
     )
+  })
+  app.get('/health', (req, res) => {
+    res.status(200).send('Okay!')
   })
 }
