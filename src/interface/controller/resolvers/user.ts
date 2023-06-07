@@ -9,7 +9,7 @@ import {
 import { dbClient } from '@/infrastructure/rdb/client'
 import { GraphQLError } from 'graphql/error'
 import { Context } from '@/types/context'
-import { errorName } from '../../erros'
+import { errorName } from '../../../erros'
 
 export const user: UserResolvers<User> = {
   Query: {

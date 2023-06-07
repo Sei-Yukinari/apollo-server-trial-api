@@ -1,9 +1,9 @@
-import { authDirectiveTransformer } from '@/controller/directive/authDirective'
+import { authDirectiveTransformer } from '@/interface/controller/directive/authDirective'
 import { loadSchemaSync } from '@graphql-tools/load'
 import { join } from 'path'
 import { GraphQLFileLoader } from '@graphql-tools/graphql-file-loader'
 import { addResolversToSchema } from '@graphql-tools/schema'
-import { resolvers } from '@/controller/resolvers'
+import { resolvers } from '@/interface/controller/resolvers'
 
 const loadedSchema = loadSchemaSync(
   join(__dirname, '../../../schema/*.graphql'),

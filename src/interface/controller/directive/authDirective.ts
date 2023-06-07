@@ -1,7 +1,7 @@
 import { defaultFieldResolver } from 'graphql/execution'
 import { GraphQLSchema } from 'graphql/type'
 import { getDirective, MapperKind, mapSchema } from '@graphql-tools/utils'
-import { errorName } from '../../erros'
+import { errorName } from '../../../erros'
 
 export const authDirectiveTransformer = (directiveName: string) => {
   const typeDirectiveArgumentMaps: Record<string, any> = {}

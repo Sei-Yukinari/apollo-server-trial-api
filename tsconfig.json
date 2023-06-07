@@ -20,7 +20,6 @@
       "@/domain/*": ["domain/*"],
       "@/infrastructure/*": ["infrastructure/*"],
       "@/interface/*": ["interface/*"],
-      "@/controller/*": ["controller/*"],
       "@/types/*": ["types/*"]
     }
   },
